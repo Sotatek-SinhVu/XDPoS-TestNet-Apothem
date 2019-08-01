@@ -44,8 +44,11 @@ var (
 		// Ethash:                   new(EthashConfig),
 		IncreaseMasternodesBlock: big.NewInt(4370000),
 		XDPoS: &XDPoSConfig{
-			Period: 15,
-			Epoch:  30000,
+			Period:           15,
+			Epoch:            30000,
+			Reward:           5000,
+			RewardCheckpoint: 30000,
+			Gap:              15000,
 		},
 	}
 
@@ -64,8 +67,11 @@ var (
 		// Ethash:                   new(EthashConfig),
 		IncreaseMasternodesBlock: big.NewInt(1000000),
 		XDPoS: &XDPoSConfig{
-			Period: 15,
-			Epoch:  30000,
+			Period:           15,
+			Epoch:            30000,
+			Reward:           5000,
+			RewardCheckpoint: 30000,
+			Gap:              15000,
 		},
 	}
 
@@ -83,8 +89,11 @@ var (
 		ConstantinopleBlock:      nil,
 		IncreaseMasternodesBlock: big.NewInt(100000),
 		XDPoS: &XDPoSConfig{
-			Period: 15,
-			Epoch:  30000,
+			Period:           15,
+			Epoch:            30000,
+			Reward:           5000,
+			RewardCheckpoint: 30000,
+			Gap:              15000,
 		},
 	}
 
@@ -307,6 +316,9 @@ func (c *ChainConfig) checkCompatible(newcfg *ChainConfig, head *big.Int) *Confi
 	}
 	if isForkIncompatible(c.ConstantinopleBlock, newcfg.ConstantinopleBlock, head) {
 		return newCompatError("Constantinople fork block", c.ConstantinopleBlock, newcfg.ConstantinopleBlock)
+	}
+	if isForkIncompatible(c.IncreaseMasternodesBlock, newcfg.IncreaseMasternodesBlock, head) {
+		return newCompatError("New max masternodes fork block", c.IncreaseMasternodesBlock, newcfg.IncreaseMasternodesBlock)
 	}
 	return nil
 }

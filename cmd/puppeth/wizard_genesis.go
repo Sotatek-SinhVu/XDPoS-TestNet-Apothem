@@ -51,11 +51,12 @@ func (w *wizard) makeGenesis() {
 		Difficulty: big.NewInt(524288),
 		Alloc:      make(core.GenesisAlloc),
 		Config: &params.ChainConfig{
-			HomesteadBlock: big.NewInt(1),
-			EIP150Block:    big.NewInt(2),
-			EIP155Block:    big.NewInt(3),
-			EIP158Block:    big.NewInt(3),
-			ByzantiumBlock: big.NewInt(4),
+			HomesteadBlock:           big.NewInt(1),
+			EIP150Block:              big.NewInt(2),
+			EIP155Block:              big.NewInt(3),
+			EIP158Block:              big.NewInt(3),
+			ByzantiumBlock:           big.NewInt(4),
+			IncreaseMasternodesBlock: big.NewInt(4),
 		},
 	}
 	// Figure out which consensus engine to choose
@@ -299,13 +300,13 @@ func (w *wizard) makeGenesis() {
 		contractBackend.ForEachStorageAt(ctx, multiSignWalletTeamAddr, nil, f)
 		// Team balance.
 		balance := big.NewInt(0) // 20 billion
-        balance.Add(balance, big.NewInt(30*1000*1000))
-        balance.Mul(balance, big.NewInt(1000000000000000000))
-        subBalance := big.NewInt(0) // i * 50k
-        subBalance.Add(subBalance, big.NewInt(int64(len(signers))*10*1000*1000))
-        subBalance.Mul(subBalance, big.NewInt(1000000000000000000))
-        balance.Sub(balance, subBalance) // 12m - i * 50k
-        genesis.Alloc[common.HexToAddress(common.TeamAddr)] = core.GenesisAccount{
+		balance.Add(balance, big.NewInt(30*1000*1000))
+		balance.Mul(balance, big.NewInt(1000000000000000000))
+		subBalance := big.NewInt(0) // i * 50k
+		subBalance.Add(subBalance, big.NewInt(int64(len(signers))*10*1000*1000))
+		subBalance.Mul(subBalance, big.NewInt(1000000000000000000))
+		balance.Sub(balance, subBalance) // 12m - i * 50k
+		genesis.Alloc[common.HexToAddress(common.TeamAddr)] = core.GenesisAccount{
 			Balance: balance,
 			Code:    code,
 			Storage: storage,
@@ -314,7 +315,7 @@ func (w *wizard) makeGenesis() {
 		fmt.Println()
 		fmt.Println("What is swap wallet address for fund 37.47Billion XDC?")
 		swapAddr := *w.readAddress()
-		baseBalance := big.NewInt(0) // 14.5Billion 
+		baseBalance := big.NewInt(0) // 14.5Billion
 		baseBalance.Add(baseBalance, big.NewInt(3747*1000*1000*10))
 		baseBalance.Mul(baseBalance, big.NewInt(1000000000000000000))
 		genesis.Alloc[swapAddr] = core.GenesisAccount{
@@ -385,6 +386,10 @@ func (w *wizard) manageGenesis() {
 		fmt.Println()
 		fmt.Printf("Which block should Byzantium come into effect? (default = %v)\n", w.conf.Genesis.Config.ByzantiumBlock)
 		w.conf.Genesis.Config.ByzantiumBlock = w.readDefaultBigInt(w.conf.Genesis.Config.ByzantiumBlock)
+
+		fmt.Println()
+		fmt.Printf("Which block should increase max masternodes come into effect? (default = %v)\n", w.conf.Genesis.Config.IncreaseMasternodesBlock)
+		w.conf.Genesis.Config.IncreaseMasternodesBlock = w.readDefaultBigInt(w.conf.Genesis.Config.IncreaseMasternodesBlock)
 
 		out, _ := json.MarshalIndent(w.conf.Genesis.Config, "", "  ")
 		fmt.Printf("Chain configuration updated:\n\n%s\n", out)
